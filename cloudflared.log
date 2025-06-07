@@ -126,4 +126,58 @@
 2025-06-07T17:30:24Z INF Retrying connection in up to 1m4s connIndex=0 event=0 ip=198.41.192.37
 2025-06-07T17:30:41Z ERR Connection terminated error="context canceled" connInde20252025-06-07T17:32:17Z ERR Failed to serve tunnel connection error="context canceled" connIndex=0 event=0 ip=198.41.192.37
 2025-06-07T17:32:17Z INF Retrying connection in up to 1m4s connIndex=0 event=0 ip=198.41.192.37
-2025-06-07T17:32:33Z ERR Connection terminated error="context canceled" connIndex=0
+2025-06-07T17:32:33Z ERR Connection terminated error="context canceled" connInde20252025-06-07T17:37:17Z ERR Failed to serve tunnel connection error="context canceled" connIndex=0 event=0 ip=198.41.192.37
+2025-06-07T17:37:17Z INF Retrying connection in up to 1m4s connIndex=0 event=0 ip=198.41.192.37
+2025-06-07T17:37:19Z ERR Connection terminated error="context canceled" connInde2025-06-07T17:40:18Z ERR Failed to serve tunnel connection error="context canceled" connIndex=0 event=0 ip=198.41.200.43
+2025-06-07T17:40:18Z INF Retrying connection in up to 1m4s connIndex=0 event=0 ip=198.41.200.43
+2025-06-07T17:40:34Z ERR Connection terminated error="context canceled" connIndex=0
+2025-06-07T17:45:36Z ERR Failed to serve tunnel connection error="context canceled" connIndex=0 event=0 ip=198.41.200.43
+2025-06-07T17:45:36Z INF Retrying connection in up to 1m4s connIndex=0 event=0 ip=198.41.200.43
+2025-06-07T17:46:05Z ERR Connection terminated error="context canceled" connIndex=0
+2025-06-07T17:49:48Z ERR Failed to serve tunnel connection error="context canceled" connIndex=0 event=0 ip=198.41.200.43
+2025-06-07T17:49:48Z INF Retrying connection in up to 1m4s connIndex=0 event=0 ip=198.41.200.43
+2025-06-07T17:50:15Z ERR Connection terminated error="context canceled" connIndex=0
+2025-06-07T17:50:34Z ERR Failed to serve tunnel connection error="context canceled" connIndex=0 event=0 ip=198.41.200.43
+2025-06-07T17:50:34Z INF Retrying connection in up to 1m4s connIndex=0 event=0 ip=198.41.200.43
+2025-06-07T17:50:42Z ERR Connection terminated error="context canceled" connIndex=0
+2025-06-07T17:55:32Z ERR Failed to serve tunnel connection error="context canceled" connIndex=0 event=0 ip=198.41.200.43
+2025-06-07T17:55:32Z INF Retrying connection in up to 1m4s connIndex=0 event=0 ip=198.41.200.43
+2025-06-07T17:55:50Z ERR Connection terminated error="context canceled" connIndex=0
+20252025-06-07T17:59:06Z ERR Failed to serve tunnel connection error="context canceled" connIndex=0 event=0 ip=198.41.192.37
+2025-06-07T17:59:06Z INF Retrying connection in up to 1m4s connIndex=0 event=0 ip=198.41.192.37
+2025-06-07T17:59:24Z ERR Connection terminated error="context canceled" connInde20252025-06-07T18:03:42Z ERR Failed to serve tunnel connection error="context canceled" connIndex=0 event=0 ip=198.41.192.37
+2025-06-07T18:03:42Z INF Retrying connection in up to 1m4s connIndex=0 event=0 ip=198.41.192.37
+2025-06-07T18:03:49Z ERR Connection terminated error="context canceled" connInde20252025-06-07T18:05:05Z ERR Failed to serve tunnel connection error="context canceled" connIndex=0 event=0 ip=198.41.192.37
+2025-06-07T18:05:05Z INF Retrying connection in up to 1m4s connIndex=0 event=0 ip=198.41.192.37
+2025-06-07T18:05:34Z ERR Connection terminated error="context canceled" connInde2025-06-07T18:07:25Z ERR Failed to serve tunnel connection error="context canceled" connIndex=0 event=0 ip=198.41.200.43
+2025-06-07T18:07:25Z INF Retrying connection in up to 1m4s connIndex=0 event=0 ip=198.41.200.43
+2025-06-07T18:07:25Z ERR Connection terminated error="context canceled" connIndex=0
+20252025-06-07T18:10:45Z ERR Failed to serve tunnel connection error="context canceled" connIndex=0 event=0 ip=198.41.192.37
+2025-06-07T18:10:45Z INF Retrying connection in up to 1m4s connIndex=0 event=0 ip=198.41.192.37
+2025-06-07T18:11:08Z ERR Connection terminated error="context canceled" connInde20252025-06-07T18:13:25Z ERR Failed to serve tunnel connection error="context canceled" connIndex=0 event=0 ip=198.41.192.37
+2025-06-07T18:13:25Z INF Retrying connection in up to 1m4s connIndex=0 event=0 ip=198.41.192.37
+2025-06-07T18:13:45Z ERR Connection terminated error="context canceled" connInde2025-06-07T18:15:45Z ERR Failed to serve tunnel connection error="context canceled" connIndex=0 event=0 ip=198.41.200.43
+2025-06-07T18:15:45Z INF Retrying connection in up to 1m4s connIndex=0 event=0 ip=198.41.200.43
+2025-06-07T18:16:08Z ERR Connection terminated error="context canceled" connIndex=0
+2025-06-07T18:20:20Z ERR Failed to serve tunnel connection error="context canceled" connIndex=0 event=0 ip=198.41.200.43
+2025-06-07T18:20:20Z INF Retrying connection in up to 1m4s connIndex=0 event=0 ip=198.41.200.43
+2025-06-07T18:20:29Z ERR Connection terminated error="context canceled" connIndex=0
+2025-06-07T18:23:18Z ERR Failed to serve tunnel connection error="context canceled" connIndex=0 event=0 ip=198.41.200.43
+2025-06-07T18:23:18Z INF Retrying connection in up to 1m4s connIndex=0 event=0 ip=198.41.200.43
+2025-06-07T18:23:26Z ERR Connection terminated error="context canceled" connIndex=0
+2025-06-07T18:27:49Z ERR Failed to serve tunnel connection error="context canceled" connIndex=0 event=0 ip=198.41.200.43
+2025-06-07T18:27:49Z INF Retrying connection in up to 1m4s connIndex=0 event=0 ip=198.41.200.43
+2025-06-07T18:28:13Z ERR Connection terminated error="context canceled" connIndex=0
+2025-06-07T18:29:48Z ERR Failed to serve tunnel connection error="context canceled" connIndex=0 event=0 ip=198.41.200.43
+2025-06-07T18:29:48Z INF Retrying connection in up to 1m4s connIndex=0 event=0 ip=198.41.200.43
+2025-06-07T18:29:57Z ERR Connection terminated error="context canceled" connIndex=0
+2025-06-07T18:30:42Z ERR Failed to serve tunnel connection error="context canceled" connIndex=0 event=0 ip=198.41.200.43
+2025-06-07T18:30:42Z INF Retrying connection in up to 1m4s connIndex=0 event=0 ip=198.41.200.43
+2025-06-07T18:31:14Z ERR Connection terminated error="context canceled" connIndex=0
+2025-06-07T18:33:31Z ERR Failed to serve tunnel connection error="context canceled" connIndex=0 event=0 ip=198.41.200.43
+2025-06-07T18:33:31Z INF Retrying connection in up to 1m4s connIndex=0 event=0 ip=198.41.200.43
+2025-06-07T18:33:47Z ERR Connection terminated error="context canceled" connIndex=0
+x=0
+2025-06-07T18:32:13Z ERR Failed to serve tunnel connection error="context canceled" connIndex=0 event=0 ip=198.41.192.37
+2025-06-07T18:32:13Z INF Retrying connection in up to 1m4s connIndex=0 event=0 ip=198.41.192.37
+2025-06-07T18:32:22Z ERR Connection terminated error="context canceled" connIndex=0

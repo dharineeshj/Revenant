@@ -161,7 +161,7 @@ void serve_client(string endpoint, int server_fd) {
     auto input_func = [&]() {
         cout << "(Shell@" << endpoint << ") > ";
         while (flag) {
-            cin >> user_input;
+            getline(cin >> ws, user_input);
 
             if (user_input == "exit") {
                 flag = false;
@@ -172,7 +172,6 @@ void serve_client(string endpoint, int server_fd) {
     auto fut = async(launch::async, input_func);
 
     while (true) {
-        // Accumulate full request
         string full_request;
         while (true) {
             char buffer[BUFFER_SIZE] = {0};
@@ -184,7 +183,6 @@ void serve_client(string endpoint, int server_fd) {
 
             full_request += string(buffer, valread);
 
-            // If end of headers detected, stop reading
             if (full_request.find("\r\n\r\n") != string::npos) {
                 break;
             }
@@ -196,7 +194,8 @@ void serve_client(string endpoint, int server_fd) {
             continue;
         }
 
-        if (result.size() > 1) {
+        if (result.size() > 3) {
+            result.resize(result.size() - 3);
             cout << result << "\n(Shell@" << endpoint << ") > " << flush;
         }
 
