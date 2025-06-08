@@ -246,7 +246,7 @@ void serve_client(string endpoint, int server_fd) {
         }
 
         // Step 4: Decode and display result if POST
-        if (full_request.find("POST") != string::npos) {
+        if (full_request.find("POST") != string::npos and full_request.find("ERROR:")==string::npos) {
             string result = url_decode(body_data);
 
             if (result.size() > 3) {
