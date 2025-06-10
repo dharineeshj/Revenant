@@ -1,29 +1,56 @@
-2025-06-09T07:41:40Z INF Thank you for trying Cloudflare Tunnel. Doing so, without a Cloudflare account, is a quick way to experiment and try it out. However, be aware that these account-less Tunnels have no uptime guarantee, are subject to the Cloudflare Online Services Terms of Use (https://www.cloudflare.com/website-terms/), and Cloudflare reserves the right to investigate your use of Tunnels for violations of such terms. If you intend to use Tunnels in production you should use a pre-created named tunnel by following: https://developers.cloudflare.com/cloudflare-one/connections/connect-apps
-2025-06-09T07:41:40Z INF Requesting new quick Tunnel on trycloudflare.com...
-2025-06-09T07:41:44Z INF +--------------------------------------------------------------------------------------------+
-2025-06-09T07:41:44Z INF |  Your quick Tunnel has been created! Visit it at (it may take some time to be reachable):  |
-2025-06-09T07:41:44Z INF |  https://nice-attempted-wave-mystery.trycloudflare.com                                     |
-2025-06-09T07:41:44Z INF +--------------------------------------------------------------------------------------------+
-2025-06-09T07:41:44Z INF Cannot determine default configuration path. No file [config.yml config.yaml] in [~/.cloudflared ~/.cloudflare-warp ~/cloudflare-warp /etc/cloudflared /usr/local/etc/cloudflared]
-2025-06-09T07:41:44Z INF Version 2024.12.1 (Checksum b868cfffc393dd9f1c5ae79812353c2ff73cfa95da4c3dcb0ec98ce55d13943d)
-2025-06-09T07:41:44Z INF GOOS: linux, GOVersion: go1.22.5, GoArch: amd64
-2025-06-09T07:41:44Z INF Settings: map[ha-connections:1 protocol:quic url:http://localhost:3881]
-2025-06-09T07:41:44Z INF Generated Connector ID: 045d09ca-676d-4300-a67b-7f69fd338aa1
-2025-06-09T07:41:44Z INF Autoupdate frequency is set autoupdateFreq=86400000
-2025-06-09T07:41:44Z INF Initial protocol quic
-2025-06-09T07:41:44Z INF ICMP proxy will use 172.18.233.191 as source for IPv4
-2025-06-09T07:41:44Z INF ICMP proxy will use fe80::215:5dff:fefd:ccbc in zone eth0 as source for IPv6
-2025-06-09T07:41:45Z INF Starting metrics server on 127.0.0.1:20241/metrics
-2025-06-09T07:41:45Z INF Registered tunnel connection connIndex=0 connection=07563765-7e4d-43ab-9437-3da594e4ce05 event=0 ip=198.41.200.43 location=bom12 protocol=quic
-2025-06-09T07:44:30Z ERR  error="Incoming request ended abruptly: context canceled" connIndex=0 event=1 ingressRule=0 originService=http://localhost:3881
-2025-06-09T07:44:30Z ERR Request failed error="Incoming request ended abruptly: context canceled" connIndex=0 dest=https://nice-attempted-wave-mystery.trycloudflare.com/LAZPBkXH?user=Dharineesh%20J event=0 ip=198.41.200.43 type=http
-2025-06-09T07:46:13Z ERR  error="Incoming request ended abruptly: context canceled" connIndex=0 event=1 ingressRule=0 originService=http://localhost:3881
-2025-06-09T07:46:13Z ERR Request failed error="Incoming request ended abruptly: context canceled" connIndex=0 dest=https://nice-attempted-wave-mystery.trycloudflare.com/LAZPBkXH?user=Dharineesh%20J event=0 ip=198.41.200.43 type=http
-2025-06-09T07:47:51Z INF Initiating graceful shutdown due to signal terminated ...
-2025-06-09T07:47:51Z ERR  error="Unable to reach the origin service. The service may be down or it may not be responding to traffic from cloudflared: dial tcp 127.0.0.1:3881: connect: connection refused" connIndex=0 event=1 ingressRule=0 originService=http://localhost:3881
-2025-06-09T07:47:51Z ERR Request failed error="Unable to reach the origin service. The service may be down or it may not be responding to traffic from cloudflared: dial tcp 127.0.0.1:3881: connect: connection refused" connIndex=0 dest=https://nice-attempted-wave-mystery.trycloudflare.com/LAZPBkXH?user=Dharineesh%20J event=0 ip=198.41.200.43 type=http
-2025-06-09T07:47:52Z ERR Failed to serve tunnel connection error="context canceled" connIndex=0 event=0 ip=198.41.200.43
-2025-06-09T07:47:52Z INF Retrying connection in up to 1s connIndex=0 event=0 ip=198.41.200.43
-2025-06-09T07:47:52Z ERR no more connections active and exiting
-2025-06-09T07:47:52Z INF Tunnel server stopped
-2025-06-09T07:47:52Z INF Metrics server stopped
+2025-06-09T08:51:46Z INF Thank you for trying Cloudflare Tunnel. Doing so, without a Cloudflare account, is a quick way to experiment and try it out. However, be aware that these account-less Tunnels have no uptime guarantee, are subject to the Cloudflare Online Services Terms of Use (https://www.cloudflare.com/website-terms/), and Cloudflare reserves the right to investigate your use of Tunnels for violations of such terms. If you intend to use Tunnels in production you should use a pre-created named tunnel by following: https://developers.cloudflare.com/cloudflare-one/connections/connect-apps
+2025-06-09T08:51:46Z INF Requesting new quick Tunnel on trycloudflare.com...
+2025-06-09T08:51:51Z INF +--------------------------------------------------------------------------------------------+
+2025-06-09T08:51:51Z INF |  Your quick Tunnel has been created! Visit it at (it may take some time to be reachable):  |
+2025-06-09T08:51:51Z INF |  https://surf-saving-trunk-daily.trycloudflare.com                                         |
+2025-06-09T08:51:51Z INF +--------------------------------------------------------------------------------------------+
+2025-06-09T08:51:51Z INF Cannot determine default configuration path. No file [config.yml config.yaml] in [~/.cloudflared ~/.cloudflare-warp ~/cloudflare-warp /etc/cloudflared /usr/local/etc/cloudflared]
+2025-06-09T08:51:51Z INF Version 2024.12.1 (Checksum b868cfffc393dd9f1c5ae79812353c2ff73cfa95da4c3dcb0ec98ce55d13943d)
+2025-06-09T08:51:51Z INF GOOS: linux, GOVersion: go1.22.5, GoArch: amd64
+2025-06-09T08:51:51Z INF Settings: map[ha-connections:1 protocol:quic url:http://localhost:3714]
+2025-06-09T08:51:51Z INF Autoupdate frequency is set autoupdateFreq=86400000
+2025-06-09T08:51:51Z INF Generated Connector ID: 57a23206-321f-453e-8284-2a1d8f750c1d
+2025-06-09T08:51:52Z INF Initial protocol quic
+2025-06-09T08:51:52Z INF ICMP proxy will use 172.18.233.191 as source for IPv4
+2025-06-09T08:51:52Z INF ICMP proxy will use fe80::215:5dff:fefd:ccbc in zone eth0 as source for IPv6
+2025-06-09T08:51:52Z INF Starting metrics server on 127.0.0.1:38283/metrics
+2025-06-09T08:51:53Z INF Registered tunnel connection connIndex=0 connection=2a1771a2-bc43-485c-8f54-106f1ca77cc2 event=0 ip=198.41.192.107 location=maa05 protocol=quic2025-06-09T11:42:27Z ERR Failed to serve tunnel connection error="failed to accept QUIC stream: timeout: no recent network activity" connIndex=0 event=0 ip=198.41.192.47
+2025-06-09T11:42:27Z ERR Serve tunnel error error="failed to accept QUIC stream: timeout: no recent network activity" connIndex=0 event=0 ip=198.41.192.47
+2025-06-09T11:42:27Z INF Retrying 2025-06-09T11:42:29Z INF Registered tunnel connection connIndex=0 connection=0d3de2b2-31f2-462c-8f6e-1b6d8ace1fc7 event=0 ip=198.41.192.37 location=ams08 protocol=quic
+2025-06-09T11:43:18Z ERR Failed to serve tunnel connection error="timeout: no recent network activity" connIndex=0 event=0 ip=198.41.200.13
+2025-06-09T11:43:18Z ERR Serve tunnel error error="timeout: no recent network activity" connIndex=0 event=0 ip=198.41.200.13
+2025-06-09T11:43:18Z INF Retrying connection in up to 1s connIndex=0 event=0 ip=198.41.200.13
+2025-06-09T11:43:20Z INF Registered tunnel connection connIndex=0 connection=50c78b3c-b408-4ae0-a0d8-f87cd2166b87 event=0 ip=198.41.200.23 location=bom12 protocol=quic
+
+k activity" connIndex=0
+2025-06-09T11:43:21Z INF Registered tunnel connection connIndex=0 connection=9add6d12-9124-4b9d-941a-0a2025-06-09T11:43:38Z INF Registered tunnel connection connIndex=0 connection=77fdbce5-6715-4703-ba62-61a6160ad6b6 event=0 ip=198.41.200.73 location=bom11 protocol=quic
+sed" connIndex=0 event=1 ingressRule=0 originService=http://localhost:3714
+2025-06-09T08:52:56Z ERR Request failed error="Unable to reach the origin service. The service may be down or it may not be responding to traffic from cloudflared: dial tcp 127.0.0.1:3714: connect: connection refused" connIndex=0 dest=https://surf-saving-trunk-daily.trycloudflare.com/WmBop0uz?user=Dharineesh%20J event=0 ip=198.41.192.107 type=http
+2025-06-09T08:52:57Z ERR  error="Unable to reach the origin service. The service may be down or it may not be responding to traffic from cloudflared: dial tcp 127.0.0.1:3714: connect: connection refused" connIndex=0 event=1 ingressRule=0 originService=http://localhost:3714
+2025-06-09T08:52:57Z ERR Request failed error="Unable to reach the origin service. The service may be down or it may not be responding to traffic from cloudflared: dial tcp 127.0.0.1:3714: connect: connection refused" connIndex=0 dest=https://surf-saving-trunk-daily.trycloudflare.com/WmBop0uz?user=Dharineesh%20J event=0 ip=198.41.192.107 type=http
+2025-06-09T08:52:59Z ERR  error="Unable to reach the origin service. The service may be down or it may not be responding to traffic from cloudflared: dial tcp 127.0.0.1:3714: connect: connection refused" connIndex=0 event=1 ingressRule=0 originService=http://localhost:3714
+2025-06-09T08:52:59Z ERR Request failed error="Unable to reach the origin service. The service may be down or it may not be responding to traffic from cloudflared: dial tcp 127.0.0.1:3714: connect: connection refused" connIndex=0 dest=https://surf-saving-trunk-daily.trycloudflare.com/WmBop0uz?user=Dharineesh%20J event=0 ip=198.41.192.107 type=http
+2025-06-09T08:53:00Z ERR  error="Unable to reach the origin service. The service may be down or it may not be responding to traffic from cloudflared: dial tcp 127.0.0.1:3714: connect: connection refused" connIndex=0 event=1 ingressRule=0 originService=http://localhost:3714
+2025-06-09T08:53:00Z ERR Request failed error="Unable to reach the origin service. The service may be down or it may not be responding to traffic from cloudflared: dial tcp 127.0.0.1:3714: connect: connection refused" connIndex=0 dest=https://surf-saving-trunk-daily.trycloudflare.com/WmBop0uz?user=Dharineesh%20J event=0 ip=198.41.192.107 type=http
+2025-06-09T08:53:01Z ERR  error="Unable to reach the origin service. The service may be down or it may not be responding to traffic from cloudflared: dial tcp 127.0.0.1:3714: connect: connection refused" connIndex=0 event=1 ingressRule=0 originService=http://localhost:3714
+2025-06-09T08:53:01Z ERR Request failed error="Unable to reach the origin service. The service may be down or it may not be responding to traffic from cloudflared: dial tcp 127.0.0.1:3714: connect: connection refused" connIndex=0 dest=https://surf-saving-trunk-daily.trycloudflare.com/WmBop0uz?user=Dharineesh%20J event=0 ip=198.41.192.107 type=http
+2025-06-09T08:53:02Z ERR  error="Unable to reach the origin service. The service may be down or it may not be responding to traffic from cloudflared: dial tcp 127.0.0.1:3714: connect: connection refused" connIndex=0 event=1 ingressRule=0 originService=http://localhost:3714
+2025-06-09T08:53:02Z ERR Request failed error="Unable to reach the origin service. The service may be down or it may not be responding to traffic from cloudflared: dial tcp 127.0.0.1:3714: connect: connection refused" connIndex=0 dest=https://surf-saving-trunk-daily.trycloudflare.com/WmBop0uz?user=Dharineesh%20J event=0 ip=198.41.192.107 type=http
+2025-06-09T08:53:03Z ERR  error="Unable to reach the origin service. The service may be down or it may not be responding to traffic from cloudflared: dial tcp 127.0.0.1:3714: connect: connection refused" connIndex=0 event=1 ingressRule=0 originService=http://localhost:3714
+2025-06-09T08:53:03Z ERR Request failed error="Unable to reach the origin service. The service may be down or it may not be responding to traffic from cloudflared: dial tcp 127.0.0.1:3714: connect: connection refused" connIndex=0 dest=https://surf-saving-trunk-daily.trycloudflare.com/WmBop0uz?user=Dharineesh%20J event=0 ip=198.41.192.107 type=http
+2025-06-09T08:53:04Z ERR  error="Unable to reach the origin service. The service may be down or it may not be responding to traffic from cloudflared: dial tcp 127.0.0.1:3714: connect: connection refused" connIndex=0 event=1 ingressRule=0 originService=http://localhost:3714
+2025-06-09T08:53:04Z ERR Request failed error="Unable to reach the origin service. The service may be down or it may not be responding to traffic from cloudflared: dial tcp 127.0.0.1:3714: connect: connection refused" connIndex=0 dest=https://surf-saving-trunk-daily.trycloudflare.com/WmBop0uz?user=Dharineesh%20J event=0 ip=198.41.192.107 type=http
+2025-06-09T11:37:20Z ERR Failed to serve tunnel connection error="Application error 0x0 (remote)" connIndex=0 event=0 ip=198.41.192.107
+2025-06-09T11:37:20Z ERR Serve tunnel error error="Application error 0x0 (remote)" connIndex=0 event=0 ip=198.41.192.107
+2025-06-09T11:37:20Z INF Retrying connection in up to 1s connIndex=0 event=0 ip=198.41.192.107
+2025-06-09T11:37:22Z INF Registered tunnel connection connIndex=0 connection=823a8862-58f7-4fb3-8675-c94398a5b946 event=0 ip=198.41.192.107 location=maa05 protocol=quic
+2025-06-09T11:42:27Z WRN Failed to serve tunnel connection error="failed to accept QUIC stream: timeout: no recent network activity" connIndex=0 event=0 ip=198.41.192.107
+2025-06-09T11:42:27Z ERR Serve tunnel error error="failed to accept QUIC stream: timeout: no recent network activity" connIndex=0 event=0 ip=198.41.192.107
+2025-06-09T11:42:27Z INF Retrying connection in up to 1s connIndex=0 event=0 ip=198.41.192.107
+2025-06-09T11:42:28Z ERR Connection terminated error="failed to accept QUIC stream: timeout: no recent network activity" connIndex=0
+2025-06-09T11:42:34Z INF Registered tunnel connection connIndex=0 connection=0d476282-c677-4b4a-8419-c31d73f031ae event=0 ip=198.41.192.107 location=ams13 protocol=quic
+2025-06-09T11:43:17Z ERR Failed to serve tunnel connection error="failed to accept QUIC stream: timeout: no recent network activity" connIndex=0 event=0 ip=198.41.192.107
+2025-06-09T11:43:17Z ERR Serve tunnel error error="failed to accept QUIC stream: timeout: no recent network activity" connIndex=0 event=0 ip=198.41.192.107
+2025-06-09T11:43:17Z INF Retrying connection in up to 1s connIndex=0 event=0 ip=198.41.192.107
+2025-06-09T11:43:18Z ERR Connection terminated error="failed to accept QUIC stream: timeout: no recent network activity" connIndex=0
+2025-06-09T11:43:22Z INF Registered tunnel connection connIndex=0 connection=056ab5b3-790c-4b4b-8e91-f6f2f894014c event=0 ip=198.41.192.107 location=maa04 protocol=quic
