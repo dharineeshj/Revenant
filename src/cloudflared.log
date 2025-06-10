@@ -1,0 +1,26 @@
+2025-06-10T11:28:19Z INF Thank you for trying Cloudflare Tunnel. Doing so, without a Cloudflare account, is a quick way to experiment and try it out. However, be aware that these account-less Tunnels have no uptime guarantee, are subject to the Cloudflare Online Services Terms of Use (https://www.cloudflare.com/website-terms/), and Cloudflare reserves the right to investigate your use of Tunnels for violations of such terms. If you intend to use Tunnels in production you should use a pre-created named tunnel by following: https://developers.cloudflare.com/cloudflare-one/connections/connect-apps
+2025-06-10T11:28:19Z INF Requesting new quick Tunnel on trycloudflare.com...
+2025-06-10T11:28:24Z INF +--------------------------------------------------------------------------------------------+
+2025-06-10T11:28:24Z INF |  Your quick Tunnel has been created! Visit it at (it may take some time to be reachable):  |
+2025-06-10T11:28:24Z INF |  https://another-weighted-internal-kansas.trycloudflare.com                                |
+2025-06-10T11:28:24Z INF +--------------------------------------------------------------------------------------------+
+2025-06-10T11:28:24Z INF Cannot determine default configuration path. No file [config.yml config.yaml] in [~/.cloudflared ~/.cloudflare-warp ~/cloudflare-warp /etc/cloudflared /usr/local/etc/cloudflared]
+2025-06-10T11:28:24Z INF Version 2024.12.1 (Checksum b868cfffc393dd9f1c5ae79812353c2ff73cfa95da4c3dcb0ec98ce55d13943d)
+2025-06-10T11:28:24Z INF GOOS: linux, GOVersion: go1.22.5, GoArch: amd64
+2025-06-10T11:28:24Z INF Settings: map[ha-connections:1 protocol:quic url:http://localhost:3219]
+2025-06-10T11:28:24Z INF Autoupdate frequency is set autoupdateFreq=86400000
+2025-06-10T11:28:24Z INF Generated Connector ID: d9d53e48-2bd1-4aaa-b695-05d9d67d4208
+2025-06-10T11:28:24Z INF Initial protocol quic
+2025-06-10T11:28:24Z INF ICMP proxy will use 172.18.233.191 as source for IPv4
+2025-06-10T11:28:24Z INF ICMP proxy will use fe80::215:5dff:fefd:c704 in zone eth0 as source for IPv6
+2025-06-10T11:28:24Z INF Starting metrics server on 127.0.0.1:32905/metrics
+2025-06-10T11:28:25Z INF Registered tunnel connection connIndex=0 connection=981eedcd-1718-4821-a1fd-65f49358bb83 event=0 ip=198.41.192.57 location=maa01 protocol=quic
+2025-06-10T11:29:19Z INF Initiating graceful shutdown due to signal terminated ...
+2025-06-10T11:29:19Z ERR  error="Unable to reach the origin service. The service may be down or it may not be responding to traffic from cloudflared: dial tcp 127.0.0.1:3219: connect: connection refused" connIndex=0 event=1 ingressRule=0 originService=http://localhost:3219
+2025-06-10T11:29:19Z ERR Request failed error="Unable to reach the origin service. The service may be down or it may not be responding to traffic from cloudflared: dial tcp 127.0.0.1:3219: connect: connection refused" connIndex=0 dest=https://another-weighted-internal-kansas.trycloudflare.com/RElvh13g?user=Dharineesh%20J event=0 ip=198.41.192.57 type=http
+2025-06-10T11:29:20Z ERR Failed to serve tunnel connection error="Application error 0x0 (remote)" connIndex=0 event=0 ip=198.41.192.57
+2025-06-10T11:29:20Z ERR Serve tunnel error error="Application error 0x0 (remote)" connIndex=0 event=0 ip=198.41.192.57
+2025-06-10T11:29:20Z INF Retrying connection in up to 1s connIndex=0 event=0 ip=198.41.192.57
+2025-06-10T11:29:20Z ERR no more connections active and exiting
+2025-06-10T11:29:20Z INF Tunnel server stopped
+2025-06-10T11:29:20Z INF Metrics server stopped

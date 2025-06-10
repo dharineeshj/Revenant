@@ -6,6 +6,11 @@
 #include <string>
 #include <unistd.h>  
 #include <algorithm> 
+#include <ifaddrs.h>
+#include <netinet/in.h>
+#include <arpa/inet.h>
+#include <cstring>
+
 using namespace std;
 
 /**
@@ -26,8 +31,7 @@ string start_cloudflared(int PORT) {
     // Step 1: Create Cloudflared tunnel on the given port
     cout << "\n[*] Starting Cloudflared tunnel on port " << PORT << "...\n";
     string command = "cloudflared tunnel --url http://localhost:" + to_string(PORT) + 
-                     " > cloudflared.log 2>&1 & echo $! > cloudflared.pid";
-    
+                 " > cloudflared.log 2>&1 &";
     // system() is used to run shell command and start cloudflared in background
     system(command.c_str()); 
     
@@ -115,4 +119,36 @@ void show_shell(const unordered_map<string, int>& mp) {
     cout << "-----------------------------\n";
     cout << "Usage: shell <Endpoint>\n";
     cout << "-----------------------------\n\n";
+}
+
+string get_device_ip() {
+    struct ifaddrs *interfaces = nullptr;
+    struct ifaddrs *ifa = nullptr;
+    string device_ip = "";
+
+    if (getifaddrs(&interfaces) == -1) {
+        perror("getifaddrs");
+        return "";
+    }
+
+    for (ifa = interfaces; ifa != nullptr; ifa = ifa->ifa_next) {
+        if (ifa->ifa_addr == nullptr)
+            continue;
+
+        if (ifa->ifa_addr->sa_family == AF_INET) {
+            char ip[INET_ADDRSTRLEN];
+            void* addr_ptr = &((struct sockaddr_in *)ifa->ifa_addr)->sin_addr;
+
+            inet_ntop(AF_INET, addr_ptr, ip, INET_ADDRSTRLEN);
+
+            // Skip loopback address (127.0.0.1)
+            if (strcmp(ip, "127.0.0.1") != 0) {
+                device_ip = ip;
+                break;  // Found valid IP, break
+            }
+        }
+    }
+
+    freeifaddrs(interfaces);
+    return device_ip;
 }

