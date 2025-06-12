@@ -121,34 +121,32 @@ void show_shell(const unordered_map<string, int>& mp) {
     cout << "-----------------------------\n\n";
 }
 
-string get_device_ip() {
-    struct ifaddrs *interfaces = nullptr;
-    struct ifaddrs *ifa = nullptr;
-    string device_ip = "";
+std::string get_device_ip() {
+    struct ifaddrs *ifaddr, *ifa;
+    char ip[INET_ADDRSTRLEN];
 
-    if (getifaddrs(&interfaces) == -1) {
+    if (getifaddrs(&ifaddr) == -1) {
         perror("getifaddrs");
         return "";
     }
 
-    for (ifa = interfaces; ifa != nullptr; ifa = ifa->ifa_next) {
+    for (ifa = ifaddr; ifa != nullptr; ifa = ifa->ifa_next) {
         if (ifa->ifa_addr == nullptr)
             continue;
-
         if (ifa->ifa_addr->sa_family == AF_INET) {
-            char ip[INET_ADDRSTRLEN];
-            void* addr_ptr = &((struct sockaddr_in *)ifa->ifa_addr)->sin_addr;
+            std::string iface_name(ifa->ifa_name);
 
+            if (iface_name == "lo" || iface_name.find("docker") == 0)
+                continue;
+
+            void* addr_ptr = &((struct sockaddr_in *)ifa->ifa_addr)->sin_addr;
             inet_ntop(AF_INET, addr_ptr, ip, INET_ADDRSTRLEN);
 
-            // Skip loopback address (127.0.0.1)
-            if (strcmp(ip, "127.0.0.1") != 0) {
-                device_ip = ip;
-                break;  // Found valid IP, break
-            }
+            freeifaddrs(ifaddr);
+            return std::string(ip);
         }
     }
 
-    freeifaddrs(interfaces);
-    return device_ip;
+    freeifaddrs(ifaddr);
+    return "";
 }
