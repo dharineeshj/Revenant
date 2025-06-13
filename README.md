@@ -1,9 +1,17 @@
 
-# Project Revenant
+### 📖 **Project Revenant** 
 
-**Project Revenant** is a Command and Control (C2) server built entirely in C++ that enables the generation of reverse shell payloads for both Windows and Linux systems. It is designed for remote access to victim machines using an automated tunneling mechanism via **Cloudflared**, allowing connections even when devices are behind NAT or firewalls.
+**Project Revenant** is a open-source Command and Control (C2) server written in **C++**, designed to automate the entire reverse shell lifecycle—from **tunnel creation** to **connection handling**—with minimal user intervention.
 
-The system provides an interactive terminal interface where attackers can control connected victims through unique session identifiers. Project Revenant is intended for educational and research purposes, demonstrating how reverse shells and remote access tools work internally.
+What sets Revenant apart is its ability to **automatically create a Cloudflared tunnel** and **embed the live tunnel URL into the generated payload**, eliminating the need for manual configuration or static IP setups. This makes it effective even in environments where victims are behind NAT or firewalls.
+
+In addition to payload generation, Revenant provides an **interactive terminal interface** for managing victims, issuing commands, and monitoring live connections. It offers a clear, session-based mechanism to interact with multiple victims through unique identifiers—making remote command execution intuitive and efficient.
+
+---
+
+### 🔍 Key Differentiator
+
+> **Project Revenant is currently the only known open-source C2 framework written in C++ that automatically sets up a Cloudflared tunnel, embeds the live URL into payloads, and provides a built-in interface for real-time connection management.**
 
 ---
 
@@ -88,8 +96,6 @@ Each victim is assigned a unique `Victim_id` upon connection, which is used to m
 The generated payload—whether for Linux or Windows—is a lightweight script designed to run in the background on the victim machine. It establishes a reverse connection to the attacker's server via a Cloudflared tunnel, continuously polling for commands. When a command is received, it is executed locally, and the output is sent back to the server. The Linux version uses Bash, while the Windows version utilizes PowerShell, but both follow the same communication logic for command execution and result delivery.
 
 ---
-
-
 
 ## Ethical Usage and Disclaimer
 

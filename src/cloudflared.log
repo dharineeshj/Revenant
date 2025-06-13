@@ -1,17 +1,39 @@
-2025-06-10T13:37:04Z INF Thank you for trying Cloudflare Tunnel. Doing so, without a Cloudflare account, is a quick way to experiment and try it out. However, be aware that these account-less Tunnels have no uptime guarantee, are subject to the Cloudflare Online Services Terms of Use (https://www.cloudflare.com/website-terms/), and Cloudflare reserves the right to investigate your use of Tunnels for violations of such terms. If you intend to use Tunnels in production you should use a pre-created named tunnel by following: https://developers.cloudflare.com/cloudflare-one/connections/connect-apps
-2025-06-10T13:37:04Z INF Requesting new quick Tunnel on trycloudflare.com...
-2025-06-10T13:37:10Z INF +--------------------------------------------------------------------------------------------+
-2025-06-10T13:37:10Z INF |  Your quick Tunnel has been created! Visit it at (it may take some time to be reachable):  |
-2025-06-10T13:37:10Z INF |  https://missing-sep-anaheim-additionally.trycloudflare.com                                |
-2025-06-10T13:37:10Z INF +--------------------------------------------------------------------------------------------+
-2025-06-10T13:37:10Z INF Cannot determine default configuration path. No file [config.yml config.yaml] in [~/.cloudflared ~/.cloudflare-warp ~/cloudflare-warp /etc/cloudflared /usr/local/etc/cloudflared]
-2025-06-10T13:37:10Z INF Version 2024.12.1 (Checksum b868cfffc393dd9f1c5ae79812353c2ff73cfa95da4c3dcb0ec98ce55d13943d)
-2025-06-10T13:37:10Z INF GOOS: linux, GOVersion: go1.22.5, GoArch: amd64
-2025-06-10T13:37:10Z INF Settings: map[ha-connections:1 protocol:quic url:http://localhost:1802]
-2025-06-10T13:37:10Z INF Generated Connector ID: 0ddda2c6-a2ff-4cee-92df-40c9c7b87460
-2025-06-10T13:37:10Z INF Autoupdate frequency is set autoupdateFreq=86400000
-2025-06-10T13:37:10Z INF Initial protocol quic
-2025-06-10T13:37:10Z INF ICMP proxy will use 172.18.233.191 as source for IPv4
-2025-06-10T13:37:10Z INF ICMP proxy will use fe80::215:5dff:fefd:c704 in zone eth0 as source for IPv6
-2025-06-10T13:37:10Z INF Starting metrics server on 127.0.0.1:20242/metrics
-2025-06-10T13:37:11Z INF Registered tunnel connection connIndex=0 connection=15d6dd45-d8dd-40cd-84b9-6f6593ba78ff event=0 ip=198.41.192.107 location=maa01 protocol=quic
+2025-06-13T16:38:25Z INF Thank you for trying Cloudflare Tunnel. Doing so, without a Cloudflare account, is a quick way to experiment and try it out. However, be aware that these account-less Tunnels have no uptime guarantee, are subject to the Cloudflare Online Services Terms of Use (https://www.cloudflare.com/website-terms/), and Cloudflare reserves the right to investigate your use of Tunnels for violations of such terms. If you intend to use Tunnels in production you should use a pre-created named tunnel by following: https://developers.cloudflare.com/cloudflare-one/connections/connect-apps
+2025-06-13T16:38:25Z INF Requesting new quick Tunnel on trycloudflare.com...
+2025-06-13T16:38:30Z INF +--------------------------------------------------------------------------------------------+
+2025-06-13T16:38:30Z INF |  Your quick Tunnel has been created! Visit it at (it may take some time to be reachable):  |
+2025-06-13T16:38:30Z INF |  https://fact-hereby-agriculture-revelation.trycloudflare.com                              |
+2025-06-13T16:38:30Z INF +--------------------------------------------------------------------------------------------+
+2025-06-13T16:38:30Z INF Version 2024.12.1 (Checksum b868cfffc393dd9f1c5ae79812353c2ff73cfa95da4c3dcb0ec98ce55d13943d)
+2025-06-13T16:38:30Z INF GOOS: linux, GOVersion: go1.22.5, GoArch: amd64
+2025-06-13T16:38:30Z INF Settings: map[ha-connections:1 protocol:quic url:http://localhost:9589]
+2025-06-13T16:38:30Z INF Generated Connector ID: e3cce126-73fc-461d-9f25-d43e5214f998
+2025-06-13T16:38:30Z INF Autoupdate frequency is set autoupdateFreq=86400000
+2025-06-13T16:38:30Z INF Initial protocol quic
+2025-06-13T16:38:30Z INF ICMP proxy will use 172.18.233.191 as source for IPv4
+2025-06-13T16:38:30Z INF ICMP proxy will use fe80::215:5dff:feac:95c2 in zone eth0 as source for IPv6
+2025-06-13T16:38:30Z INF Starting metrics server on 127.0.0.1:35133/metrics
+2025-06-13T16:38:31Z INF Registered tunnel connection connIndex=0 connection=364c4235-87ad-464a-a179-8d1cff8c39c8 event=0 ip=198.41.200.193 location=bom11 protocol=quic
+2025-06-13T16:40:28Z ERR  error="Incoming request ended abruptly: context canceled" connIndex=0 event=1 ingressRule=0 originService=http://localhost:9589
+2025-06-13T16:40:28Z ERR Request failed error="Incoming request ended abruptly: context canceled" connIndex=0 dest=https://fact-hereby-agriculture-revelation.trycloudflare.com/z8XVP1xw?user=Dharineesh%20J event=0 ip=198.41.200.193 type=http
+2025-06-13T16:42:11Z ERR  error="Incoming request ended abruptly: context canceled" connIndex=0 event=1 ingressRule=0 originService=http://localhost:9589
+2025-06-13T16:42:11Z ERR Request failed error="Incoming request ended abruptly: context canceled" connIndex=0 dest=https://fact-hereby-agriculture-revelation.trycloudflare.com/z8XVP1xw?user=Dharineesh%20J event=0 ip=198.41.200.193 type=http
+2025-06-13T16:43:55Z ERR  error="Incoming request ended abruptly: context canceled" connIndex=0 event=1 ingressRule=0 originService=http://localhost:9589
+2025-06-13T16:43:55Z ERR Request failed error="Incoming request ended abruptly: context canceled" connIndex=0 dest=https://fact-hereby-agriculture-revelation.trycloudflare.com/z8XVP1xw?user=Dharineesh%20J event=0 ip=198.41.200.193 type=http
+2025-06-13T16:43:56Z ERR  error="Incoming request ended abruptly: context canceled" connIndex=0 event=1 ingressRule=0 originService=http://localhost:9589
+2025-06-13T16:43:56Z ERR Request failed error="Incoming request ended abruptly: context canceled" connIndex=0 dest=https://fact-hereby-agriculture-revelation.trycloudflare.com/mQLiJ6uf?user=Dharineesh%20J event=0 ip=198.41.200.193 type=http
+2025-06-13T16:44:47Z ERR  error="Incoming request ended abruptly: context canceled" connIndex=0 event=1 ingressRule=0 originService=http://localhost:9589
+2025-06-13T16:44:47Z ERR Request failed error="Incoming request ended abruptly: context canceled" connIndex=0 dest=https://fact-hereby-agriculture-revelation.trycloudflare.com/cSnBjGkS?user=kali event=0 ip=198.41.200.193 type=http
+2025-06-13T16:44:50Z INF Initiating graceful shutdown due to signal terminated ...
+2025-06-13T16:44:50Z ERR  error="Unable to reach the origin service. The service may be down or it may not be responding to traffic from cloudflared: dial tcp 127.0.0.1:9589: connect: connection refused" connIndex=0 event=1 ingressRule=0 originService=http://localhost:9589
+2025-06-13T16:44:50Z ERR Request failed error="Unable to reach the origin service. The service may be down or it may not be responding to traffic from cloudflared: dial tcp 127.0.0.1:9589: connect: connection refused" connIndex=0 dest=https://fact-hereby-agriculture-revelation.trycloudflare.com/cSnBjGkS?user=kali event=0 ip=198.41.200.193 type=http
+2025-06-13T16:44:50Z ERR  error="Unable to reach the origin service. The service may be down or it may not be responding to traffic from cloudflared: dial tcp 127.0.0.1:9589: connect: connection refused" connIndex=0 event=1 ingressRule=0 originService=http://localhost:9589
+2025-06-13T16:44:50Z ERR Request failed error="Unable to reach the origin service. The service may be down or it may not be responding to traffic from cloudflared: dial tcp 127.0.0.1:9589: connect: connection refused" connIndex=0 dest=https://fact-hereby-agriculture-revelation.trycloudflare.com/z8XVP1xw?user=Dharineesh%20J event=0 ip=198.41.200.193 type=http
+2025-06-13T16:44:50Z ERR  error="Unable to reach the origin service. The service may be down or it may not be responding to traffic from cloudflared: dial tcp 127.0.0.1:9589: connect: connection refused" connIndex=0 event=1 ingressRule=0 originService=http://localhost:9589
+2025-06-13T16:44:50Z ERR Request failed error="Unable to reach the origin service. The service may be down or it may not be responding to traffic from cloudflared: dial tcp 127.0.0.1:9589: connect: connection refused" connIndex=0 dest=https://fact-hereby-agriculture-revelation.trycloudflare.com/mQLiJ6uf?user=Dharineesh%20J event=0 ip=198.41.200.193 type=http
+2025-06-13T16:44:51Z ERR Failed to serve tunnel connection error="Application error 0x0 (remote)" connIndex=0 event=0 ip=198.41.200.193
+2025-06-13T16:44:51Z ERR Serve tunnel error error="Application error 0x0 (remote)" connIndex=0 event=0 ip=198.41.200.193
+2025-06-13T16:44:51Z INF Retrying connection in up to 1s connIndex=0 event=0 ip=198.41.200.193
+2025-06-13T16:44:51Z ERR no more connections active and exiting
+2025-06-13T16:44:51Z INF Tunnel server stopped
+2025-06-13T16:44:51Z INF Metrics server stopped

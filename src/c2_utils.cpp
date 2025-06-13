@@ -10,8 +10,11 @@
 #include <netinet/in.h>
 #include <arpa/inet.h>
 #include <cstring>
-
+#include <fstream>
+#include <ctime>
+#include <filesystem> // C++17
 using namespace std;
+namespace fs = std::filesystem;
 
 /**
  * @brief Starts a Cloudflared tunnel on the specified port and extracts its public URL.
@@ -25,7 +28,7 @@ using namespace std;
  * @return A string containing the Cloudflared public URL (e.g., "https://xxxx.trycloudflare.com").
  *         If no URL is found, returns an empty string and the server will fallback to localhost.
  * 
- * @throws std::runtime_error if popen() fails to execute the grep command.
+ * @throws runtime_error if popen() fails to execute the grep command.
  */
 string start_cloudflared(int PORT) {
     // Step 1: Create Cloudflared tunnel on the given port
@@ -121,7 +124,45 @@ void show_shell(const unordered_map<string, int>& mp) {
     cout << "-----------------------------\n\n";
 }
 
-std::string get_device_ip() {
+string get_time() {
+    time_t now = time(0);
+    tm* ltm = localtime(&now);
+    char buf[32];
+    strftime(buf, sizeof(buf), "%Y-%m-%d %H:%M:%S", ltm);
+    return string(buf);
+}
+
+// Create log file with header only if it doesn't exist
+void create_log(const string& file_name) {
+    
+    if (!fs::exists(file_name)) {
+        ofstream write_file(file_name, ios::app);
+        string header = "Time\t\t\t\t\t\t\t\t\t\tcommand\t\t\t\t\t\t\t\t\t\tStatus\t\t\t\t\t\t\t\t\t\tData\n-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------\n";
+                     
+        write_file << header;
+    }
+}
+
+void write_log(const string& file_name, const string& command,  string data,string status) {
+    // Create file with header if it doesn't exist
+    create_log(file_name+".log");
+
+    ofstream write_file(file_name+".log", ios::app);
+    string time = get_time();
+
+    size_t pos = 0;
+    string target = "\n";
+    string replacement = "\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t";
+
+    while ((pos = data.find("\n", pos)) != string::npos) {
+        data.replace(pos, target.length(), replacement);
+        pos += replacement.length(); // move past the replacement
+    }
+    string write_data = time + "\t\t\t\t\t\t\t" + command + "\t\t\t\t\t\t\t\t\t\t\t" + status + +"\t\t\t\t\t\t\t\t\t\t"+data+"\n-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------\n";
+    write_file << write_data;
+}
+
+string get_device_ip() {
     struct ifaddrs *ifaddr, *ifa;
     char ip[INET_ADDRSTRLEN];
 
@@ -134,7 +175,7 @@ std::string get_device_ip() {
         if (ifa->ifa_addr == nullptr)
             continue;
         if (ifa->ifa_addr->sa_family == AF_INET) {
-            std::string iface_name(ifa->ifa_name);
+            string iface_name(ifa->ifa_name);
 
             if (iface_name == "lo" || iface_name.find("docker") == 0)
                 continue;
@@ -143,7 +184,7 @@ std::string get_device_ip() {
             inet_ntop(AF_INET, addr_ptr, ip, INET_ADDRSTRLEN);
 
             freeifaddrs(ifaddr);
-            return std::string(ip);
+            return string(ip);
         }
     }
 
