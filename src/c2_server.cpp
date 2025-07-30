@@ -239,32 +239,9 @@ void serve_client(string endpoint, int server_fd) {
             string temp_input;
             getline(cin >> ws, temp_input);
 
-            if (temp_input == "exit") {
-                // Confirm before terminating client.
-                cout << "Are you sure you want to terminate the connection?\n";
-                char choice;
-                while (true) {
-                    cout << "(Y/N): ";
-                    cin >> choice;
-                    cin.ignore();
-                    choice = toupper(choice);
-
-                    if (choice == 'Y') {
-                        lock_guard<mutex> lock(input_mutex);
-                        local_user_input = "exit";
-                        input_ready = true;
-                        terminate_client = true;
-                        flag = false;
-                        break;
-                    } else if (choice == 'N') {
-                        cout << "(Shell@" << endpoint << ") > " << flush;
-                        break;
-                    } else {
-                        cout << "Invalid choice, please enter Y or N\n";
-                    }
-                }
-            } else if (temp_input == "quit") {
+            if (temp_input == "quit" || temp_input == "exit") {
                 // Return to MainShell.
+                
                 lock_guard<mutex> lock(input_mutex);
                 local_user_input = "";
                 input_ready = true;
@@ -371,11 +348,11 @@ void serve_client(string endpoint, int server_fd) {
         send(mp[endpoint], response.c_str(), response.length(), 0);
 
         // Handle exit or quit.
-        if (terminate_client && body == "exit") {
-            close(mp[endpoint]);
-            mp.erase(endpoint);
-            break;
-        }
+        // if (terminate_client && body == "exit") {
+        //     close(mp[endpoint]);
+        //     mp.erase(endpoint);
+        //     break;
+        // }
 
         if (!flag && !terminate_client) {
             break;
@@ -480,23 +457,69 @@ void server() {
  * 
  * @return int 
  */
-int main() {
+int main(int argc, char* argv[]) {
     banner();
 
-    // Pick random port in range 1000-10000.
-    random_device rd;
-    mt19937 gen(rd());
-    uniform_int_distribution<> dis(1000, 10000);
-    PORT = dis(gen);
+    // Join all arguments into a single string
+    string args;
+    for (int i = 1; i < argc; ++i) {
+        args += string(argv[i]) + " ";
+    }
 
-    cloudflared_url = start_cloudflared(PORT);
-    if (cloudflared_url.size() <= 0) {
-        string ip= get_device_ip();
-        cout << "Failed to create tunnel"<<endl;
-        cloudflared_url = "http://"+ip+':'+ to_string(PORT);
-        cout<<cloudflared_url;
+    // Tokenize the arguments
+    stringstream ss(args);
+    string token;
+    vector<string> tokens;
+    while (ss >> token) {
+        tokens.push_back(token);
+    }
+
+    // Find the "-p" argument
+    auto it = find(tokens.begin(), tokens.end(), "-p");
+    if (it == tokens.end() || (it + 1) == tokens.end()) {
+        // No port specified, pick random port
+        char ch;
+        cout<<"No port is specified select (Y/N) to start the server with random port:";
+        cin>>ch;
+        ch=toupper(ch);
+        if(ch=='Y'){
+            random_device rd;
+            mt19937 gen(rd());
+            uniform_int_distribution<> dis(1000, 10000);
+            PORT = dis(gen);
+        }
+        else if(ch=='N'){
+            cout<<"specify port with -p <port number>";
+            return 0;
+        }
+        else{
+            cout<<"Wrong choice";
+            return 0;
+        }
     } else {
-        cout << "Tunnel created successfully" << endl;
+        try {
+            int port_candidate = stoi(*(it + 1));
+            if (port_candidate > 0 && port_candidate <= 65535) {
+                PORT = port_candidate;
+            } else {
+                cout << "The port number is not in range (1-65535)" << endl;
+                return 1;
+            }
+        } catch (...) {
+            cout << "Invalid port number format" << endl;
+            return 1;
+        }
+    }
+
+    // Attempt to create tunnel
+    cloudflared_url = start_cloudflared(PORT);
+    if (cloudflared_url.empty()) {
+        string ip = get_device_ip();
+        cout << "Failed to create tunnel" << endl;
+        cloudflared_url = "http://" + ip + ':' + to_string(PORT);
+        cout << cloudflared_url << endl;
+    } else {
+        cout << "Tunnel created successfully: " << cloudflared_url << endl;
     }
 
     server();
