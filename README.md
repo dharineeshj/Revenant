@@ -62,11 +62,13 @@ Once compiled, start the server with root privileges:
 
 ```bash
 sudo ./c2
+or
+sudo ./c2 -p 3456
 ```
 
 The server performs the following on startup:
 
-1. Picks an available local port.
+1. Picks an available local port or uses the user given port.
 2. Launches a Cloudflared tunnel exposing that port.
 3. Starts listening for victim connections.
 4. Opens an interactive terminal for managing connections.
