@@ -154,7 +154,7 @@ void shell(unordered_map<string, int>& mp, int server_fd) {
                 cout << "OS not found or not supported.\n";
             }
         }
-        else if (shell_command == "quit") {
+        else if (shell_command == "quit" || shell_command == "exit") {
             // Cleanly close server by killing process on port.
             string command = "sudo kill $(sudo lsof -ti :" + to_string(PORT) + ") 2>&1 &";
             system(command.c_str());
@@ -318,9 +318,10 @@ void serve_client(string endpoint, int server_fd) {
 
         // Process HTTP POST result.
         if (full_request.find("POST") != string::npos) {
-            int check=full_request.find("ERROR");
+            int check1=full_request.find("ERROR");
+            int check2=full_request.find("bash%3A");
             string result = url_decode(body_data);
-            if(check<=0){
+            if(check1<=0 and check2<=0){
                 write_log(endpoint,local_user_input,result,"SUCCESS");
             }
             else{

@@ -79,11 +79,11 @@ void help() {
     cout << "        Available Commands\n";
     cout << "=============================\n\n";
 
-    cout << "generate os=<OS>    : Generate payload for target OS\n";
-    cout << "show shell          : Show active shell sessions\n";
-    cout << "shell <shell-id>    : Interact with a shell session\n";
-    cout << "help                : Display this help message\n";
-    cout << "exit                : Exit the server\n";
+    cout << "generate os=<OS>         : Generate payload for target OS\n";
+    cout << "show shell               : Show active shell sessions\n";
+    cout << "shell <shell-id>         : Interact with a shell session\n";
+    cout << "help                     : Display this help message\n";
+    cout << "exit/quit                : Exit the server\n";
 
     cout << "\n=============================\n\n";
 }
