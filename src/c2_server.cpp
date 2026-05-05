@@ -412,7 +412,6 @@ void client_connection(int server_fd) {
         send(mp[endpoint], response.c_str(), response.length(), 0);
     }
 }
-
 /**
  * @brief Starts the C2 server.
  */
@@ -450,7 +449,6 @@ void server() {
 
     close(server_fd);
 }
-
 /**
  * @brief Entry point of the C2 server application.
  * 
@@ -474,7 +472,6 @@ int main(int argc, char* argv[]) {
     while (ss >> token) {
         tokens.push_back(token);
     }
-
     // Find the "-p" argument
     auto it = find(tokens.begin(), tokens.end(), "-p");
     if (it == tokens.end() || (it + 1) == tokens.end()) {
